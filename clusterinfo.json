@@ -1,0 +1,229 @@
+{
+  "aadProfile": {
+    "adminGroupObjectIDs": [
+      "a200f855-e277-4c56-a45b-4208590a4377"
+    ],
+    "adminUsers": null,
+    "clientAppId": null,
+    "enableAzureRbac": true,
+    "managed": true,
+    "serverAppId": null,
+    "serverAppSecret": null,
+    "tenantId": "798ee643-af94-452c-83ba-2299a6353069"
+  },
+  "addonProfiles": null,
+  "agentPoolProfiles": [
+    {
+      "availabilityZones": null,
+      "count": 3,
+      "creationData": null,
+      "currentOrchestratorVersion": "1.31.7",
+      "enableAutoScaling": true,
+      "enableEncryptionAtHost": false,
+      "enableFips": false,
+      "enableNodePublicIp": false,
+      "enableUltraSsd": false,
+      "gpuInstanceProfile": null,
+      "hostGroupId": null,
+      "kubeletConfig": null,
+      "kubeletDiskType": "OS",
+      "linuxOsConfig": null,
+      "maxCount": 3,
+      "maxPods": 30,
+      "minCount": 1,
+      "mode": "System",
+      "name": "systempool1",
+      "nodeImageVersion": "AKSUbuntu-2204gen2containerd-202504.28.0",
+      "nodeLabels": null,
+      "nodePublicIpPrefixId": null,
+      "nodeTaints": null,
+      "orchestratorVersion": "1.31",
+      "osDiskSizeGb": 128,
+      "osDiskType": "Managed",
+      "osSku": "Ubuntu",
+      "osType": "Linux",
+      "podSubnetId": null,
+      "powerState": {
+        "code": "Running"
+      },
+      "provisioningState": "Updating",
+      "proximityPlacementGroupId": null,
+      "scaleDownMode": "Delete",
+      "scaleSetEvictionPolicy": null,
+      "scaleSetPriority": null,
+      "spotMaxPrice": null,
+      "tags": null,
+      "type": "VirtualMachineScaleSets",
+      "upgradeSettings": {
+        "drainTimeoutInMinutes": null,
+        "maxSurge": "10%"
+      },
+      "vmSize": "standard_d4as_v6",
+      "vnetSubnetId": "/subscriptions/5f1acf15-4ba0-45ef-9ccf-bb0d34b81249/resourceGroups/rg-aks-test-weu-02/providers/Microsoft.Network/virtualNetworks/vnet-aks-test-weu-02/subnets/subnet-aks-test-weu-02",
+      "workloadRuntime": null
+    }
+  ],
+  "apiServerAccessProfile": null,
+  "autoScalerProfile": {
+    "balanceSimilarNodeGroups": "false",
+    "expander": "random",
+    "maxEmptyBulkDelete": "10",
+    "maxGracefulTerminationSec": "600",
+    "maxNodeProvisionTime": "15m",
+    "maxTotalUnreadyPercentage": "45",
+    "newPodScaleUpDelay": "0s",
+    "okTotalUnreadyCount": "3",
+    "scaleDownDelayAfterAdd": "10m",
+    "scaleDownDelayAfterDelete": "10s",
+    "scaleDownDelayAfterFailure": "3m",
+    "scaleDownUnneededTime": "10m",
+    "scaleDownUnreadyTime": "20m",
+    "scaleDownUtilizationThreshold": "0.5",
+    "scanInterval": "10s",
+    "skipNodesWithLocalStorage": "false",
+    "skipNodesWithSystemPods": "true"
+  },
+  "autoUpgradeProfile": {
+    "nodeOsUpgradeChannel": "NodeImage",
+    "upgradeChannel": null
+  },
+  "azureMonitorProfile": {
+    "metrics": {
+      "enabled": true,
+      "kubeStateMetrics": {
+        "metricAnnotationsAllowList": "",
+        "metricLabelsAllowlist": ""
+      }
+    }
+  },
+  "azurePortalFqdn": "aktestweu03-pe4tng4q.portal.hcp.westeurope.azmk8s.io",
+  "currentKubernetesVersion": "1.31.7",
+  "disableLocalAccounts": true,
+  "diskEncryptionSetId": null,
+  "dnsPrefix": "aktestweu03",
+  "enablePodSecurityPolicy": null,
+  "enableRbac": true,
+  "extendedLocation": null,
+  "fqdn": "aktestweu03-pe4tng4q.hcp.westeurope.azmk8s.io",
+  "fqdnSubdomain": null,
+  "httpProxyConfig": null,
+  "id": "/subscriptions/5f1acf15-4ba0-45ef-9ccf-bb0d34b81249/resourcegroups/rg-aks-test-weu-02/providers/Microsoft.ContainerService/managedClusters/aks-test-weu-08",
+  "identity": {
+    "delegatedResources": null,
+    "principalId": "216113c1-53e3-44e3-b6e2-4433d6a1bdc1",
+    "tenantId": "798ee643-af94-452c-83ba-2299a6353069",
+    "type": "SystemAssigned",
+    "userAssignedIdentities": null
+  },
+  "identityProfile": {
+    "kubeletidentity": {
+      "clientId": "6efaa057-3739-4dae-af1a-f682146a3f92",
+      "objectId": "f8475217-9a29-4fb7-ac07-34dc6ff625c4",
+      "resourceId": "/subscriptions/5f1acf15-4ba0-45ef-9ccf-bb0d34b81249/resourcegroups/mg-rg-aks-test-weu-08/providers/Microsoft.ManagedIdentity/userAssignedIdentities/aks-test-weu-08-agentpool"
+    }
+  },
+  "kubernetesVersion": "1.31",
+  "linuxProfile": {
+    "adminUsername": "azureuser",
+    "ssh": {
+      "publicKeys": [
+        {
+          "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCfGSq50jcNqtXshwopJ1z4+PUacXfn6HFMFHYXpFpnpPiPJE+ukWrxdHutn8zdAcPRSRuBtY6/w/FqD0ccPUJ9O6TtCFrrtpwD/VMDZWxj7Xs0geVlgmryrxo3IsTHTZiWHGzEvgfz6G/7OData24x3AuQeOga/UW//RukqR4Hyu43D2jaU2mp9yI08xUHTR6wNRpFxEcSxOjdvCNQhLwLKUY2SVdp00NyXnXryDd+IE+j7FK5O0U0oW7hUQRg18V5WJZR3UhKDqSuNwKhKmm1pMvePXEtlFPDZ8aE53hFJ3MlVGx01tTRgJYARjIt5gNIuJ3ZRYp8Gldz3xJedp85"
+        }
+      ]
+    }
+  },
+  "location": "westeurope",
+  "maxAgentPools": 100,
+  "name": "aks-test-weu-08",
+  "networkProfile": {
+    "dnsServiceIp": "10.0.0.10",
+    "ipFamilies": [
+      "IPv4"
+    ],
+    "loadBalancerProfile": {
+      "allocatedOutboundPorts": null,
+      "effectiveOutboundIPs": [
+        {
+          "id": "/subscriptions/5f1acf15-4ba0-45ef-9ccf-bb0d34b81249/resourceGroups/mg-rg-aks-test-weu-08/providers/Microsoft.Network/publicIPAddresses/36b1a690-922a-4f8b-bedb-fbca23908a92",
+          "resourceGroup": "mg-rg-aks-test-weu-08"
+        }
+      ],
+      "enableMultipleStandardLoadBalancers": null,
+      "idleTimeoutInMinutes": null,
+      "managedOutboundIPs": {
+        "count": 1,
+        "countIpv6": null
+      },
+      "outboundIPs": null,
+      "outboundIpPrefixes": null
+    },
+    "loadBalancerSku": "standard",
+    "natGatewayProfile": null,
+    "networkDataplane": "azure",
+    "networkMode": null,
+    "networkPlugin": "azure",
+    "networkPluginMode": null,
+    "networkPolicy": "azure",
+    "outboundType": "loadBalancer",
+    "podCidr": null,
+    "podCidrs": null,
+    "serviceCidr": "10.0.0.0/16",
+    "serviceCidrs": [
+      "10.0.0.0/16"
+    ]
+  },
+  "nodeResourceGroup": "mg-rg-aks-test-weu-08",
+  "oidcIssuerProfile": {
+    "enabled": false,
+    "issuerUrl": null
+  },
+  "podIdentityProfile": null,
+  "powerState": {
+    "code": "Running"
+  },
+  "privateFqdn": null,
+  "privateLinkResources": null,
+  "provisioningState": "Updating",
+  "publicNetworkAccess": null,
+  "resourceGroup": "rg-aks-test-weu-02",
+  "securityProfile": {
+    "azureKeyVaultKms": null,
+    "defender": null,
+    "imageCleaner": null,
+    "workloadIdentity": null
+  },
+  "servicePrincipalProfile": {
+    "clientId": "msi"
+  },
+  "sku": {
+    "name": "Base",
+    "tier": "Free"
+  },
+  "storageProfile": {
+    "blobCsiDriver": null,
+    "diskCsiDriver": {
+      "enabled": true
+    },
+    "fileCsiDriver": {
+      "enabled": true
+    },
+    "snapshotController": {
+      "enabled": true
+    }
+  },
+  "supportPlan": "KubernetesOfficial",
+  "systemData": null,
+  "type": "Microsoft.ContainerService/ManagedClusters",
+  "windowsProfile": {
+    "adminPassword": null,
+    "adminUsername": "azureuser",
+    "enableCsiProxy": true,
+    "gmsaProfile": null,
+    "licenseType": null
+  },
+  "workloadAutoScalerProfile": {
+    "keda": null,
+    "verticalPodAutoscaler": null
+  }
+}
