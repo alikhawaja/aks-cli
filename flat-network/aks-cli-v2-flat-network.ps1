@@ -1,11 +1,10 @@
 $AKS_RESOURCE_GROUP="rg-aks-test-weu-02"
 $MANAGED_RESOURCE_GROUP="mg-rg-aks-test-weu-02"
-$KEY_VAULT_NAME="kv-aks-test-weu-02"
-$AKS_KEY_NAME="aksuatkey"
 $REGION="westeurope"
-$MY_AKS_CLUSTER_NAME="aks-test-weu-03"
+$AKS_CLUSTER_NAME="aks-test-weu-03"
 $MY_DNS_LABEL="aktestweu03"
-$AAD_TENANT_ID='798ee643-af94-452c-83ba-2299a6353069'
+#$AAD_TENANT_ID='798ee643-af94-452c-83ba-2299a6353069'  # MSDN Azure AD tenant ID
+$AAD_TENANT_ID='5fa993f9-c945-40bd-8d82-cde4f3400956' # MCAPS Azure AD Tenant ID
 $AKS_AAD_ADMIN_GROUP_NAME="aks_dev_admins"
 $MY_ACR_NAME="acrtestweu02"
 $VNET_RESOURCE_GROUP="rg-aks-test-weu-02"
@@ -13,6 +12,8 @@ $VNET_NAME="vnet-aks-test-weu-02"
 $VNET_ADDRESS_PREFIX="10.10.0.0/16"
 $SUBNET_NAME="subnet-aks-test-weu-02"
 $SUBNET_ADDRESS_PREFIX="10.10.0.0/22"
+$SYSTEM_POOL_NAME="systempool1" # up to 12 alphanumeric characters
+
 
 # check if resource group exists otherwise create it   
 $group_count = az group list --query "[?name=='$AKS_RESOURCE_GROUP'] | length(@)" 
@@ -23,7 +24,7 @@ else {
     az group create --name $AKS_RESOURCE_GROUP --location $REGION
 }
 
-# create a virtual network
+# retreive vnet if exists, otherwise create a a new virtual network
 if((az network vnet list --resource-group $VNET_RESOURCE_GROUP --query "[?name=='$VNET_NAME']| length(@)") -eq 1) {
     echo "VNet $VNET_NAME already exists." }
 else {
@@ -34,7 +35,7 @@ else {
         --subnet-prefix $SUBNET_ADDRESS_PREFIX
 }
 
-# Create an Azure Container Registry (ACR)
+# Retrieve the existing ACR, otherwise create a new Azure Container Registry (ACR)
 if((az acr check-name --name $MY_ACR_NAME --query "nameAvailable") -eq "false") {
     echo "ACR $MY_ACR_NAME already exists." }
 else {
@@ -66,48 +67,49 @@ else {
     echo "Subnet $SUBNET_NAME found in VNet $VNET_NAME with ID: $vnet_subnet_id"
 }
 
-# Key Vault - check if it exists otherwise create it
-$keyvault_id=$(az keyvault list --query "[?name=='$KEY_VAULT_NAME'].id" -o tsv)
-if($keyvault_id -eq $null) {
-    echo "Key Vault $KEY_VAULT_NAME not found."
-    #create the key vault
-    echo "Creating Key Vault $KEY_VAULT_NAME..."
-    az keyvault create --name $KEY_VAULT_NAME --resource-group $AKS_RESOURCE_GROUP --location $REGION `
-        --sku standard `
-        --enable-purge-protection true `
-        --default-action Deny --bypass AzureServices `
-        --public-network-access Disabled `
-
-    $keyvault_id = $(az keyvault list --query "[?name=='$KEY_VAULT_NAME'].id" -o tsv)
-    echo "Key Vault $KEY_VAULT_NAME created with ID: $keyvault_id"
-}
-else {
-    echo "Key Vault $KEY_VAULT_NAME found with ID: $keyvault_id"
-}
-
-az keyvault key create --name $AKS_KEY_NAME `
-    --vault-name $KEY_VAULT_NAME `
-    --protection software --kty RSA --size 2048 `
-    --tags "environment=dev" "owner=admin"
-$AKS_KEY_ID = $(az keyvault key show --name $AKS_KEY_NAME --vault-name $KEY_VAULT_NAME --query 'key.kid' -o tsv)
-az keyvault set-policy --name $KEY_VAULT_NAME --object-id $aad_ak_dev_admin_group_object_id --key-permissions get list create update delete backup restore recover purge
-
-$MY_AKS_CLUSTER_NAME="aks-test-weu-04"
-az aks create --resource-group $AKS_RESOURCE_GROUP --name $MY_AKS_CLUSTER_NAME --node-count 1 `
+echo "Creating AKS cluster $AKS_CLUSTER_NAME in resource group $AKS_RESOURCE_GROUP..."
+az aks create --resource-group $AKS_RESOURCE_GROUP `
+                --name $AKS_CLUSTER_NAME `
+                --nodepool-name $SYSTEM_POOL_NAME `
                 --node-resource-group $MANAGED_RESOURCE_GROUP `
                 --generate-ssh-keys  `
                 --enable-managed-identity `
-                --enable-azure-rbac --enable-aad --aad-admin-group-object-ids $aad_ak_dev_admin_group_object_id `
+                --disable-local-accounts `
+                --enable-azure-rbac `
+                --enable-aad --aad-admin-group-object-ids $aad_ak_dev_admin_group_object_id `
                 --aad-tenant-id $AAD_TENANT_ID `
-                --dns-name-prefix $MY_DNS_LABEL --location $REGION `
-                --network-plugin azure --network-policy azure --vnet-subnet-id $vnet_subnet_id `
+                --dns-name-prefix $MY_DNS_LABEL `
+                --location $REGION `
+                --network-plugin azure `
+                --network-policy azure `
+                --vnet-subnet-id $vnet_subnet_id `
                 --load-balancer-sku standard `
+                --enable-cluster-autoscaler `
+                --node-count 1 `
+                --min-count 1 `
+                --max-count 3 `
                 --node-vm-size standard_d4as_v6 `
                 --attach-acr $MY_ACR_NAME `
-                --enable-azure-monitor-metrics `
-                --enable-azure-keyvault-kms `
-                --azure-keyvault-kms-key-id $AKS_KEY_ID `
-                --azure-keyvault-kms-key-vault-resource-id $keyvault_id `
-                --azure-keyvault-kms-key-vault-network-access 'Public'
-       
-az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $MY_AKS_CLUSTER_NAME --overwrite-existing
+                --enable-azure-monitor-metrics  
+
+# sleep until the cluster is ready
+$cluster_status = $(az aks show --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTER_NAME --query provisioningState -o tsv)
+while ($cluster_status -ne "Succeeded") {
+    echo "Waiting for AKS cluster to be ready..."
+    Start-Sleep -Seconds 30
+    $cluster_status = $(az aks show --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTER_NAME --query provisioningState -o tsv)
+}   
+
+# Add a user node pool to the cluster
+echo "Adding user node pool $USER_POOL_NAME to AKS cluster $AKS_CLUSTER_NAME..."
+az aks nodepool add --cluster-name $AKS_CLUSTER_NAME --name $USER_POOL_NAME --resource-group $AKS_RESOURCE_GROUP `
+                --node-count 1 `
+                --node-vm-size standard_d4as_v6 `
+                --enable-cluster-autoscaler `
+                --os-sku AzureLinux `
+                --min-count 1 `
+                --max-count 3 `
+                --mode user   
+
+echo "Retreiving AKS credentials..."
+az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTER_NAME --overwrite-existing
