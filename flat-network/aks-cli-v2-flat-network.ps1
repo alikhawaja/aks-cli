@@ -101,6 +101,8 @@ while ($cluster_status -ne "Succeeded") {
 }   
 
 # Add a user node pool to the cluster
+
+$USER_POOL_NAME = "userpool1"
 echo "Adding user node pool $USER_POOL_NAME to AKS cluster $AKS_CLUSTER_NAME..."
 az aks nodepool add --cluster-name $AKS_CLUSTER_NAME --name $USER_POOL_NAME --resource-group $AKS_RESOURCE_GROUP `
                 --node-count 1 `
